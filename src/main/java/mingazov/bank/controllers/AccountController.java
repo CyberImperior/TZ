@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class AddAccountController {
+public class AccountController {
     //todo сделать имплементацию
     private final CustomerService customerService;
     private final AccountService accountService;
