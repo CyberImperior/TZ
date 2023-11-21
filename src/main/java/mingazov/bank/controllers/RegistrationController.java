@@ -1,5 +1,9 @@
 package mingazov.bank.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mingazov.bank.dto.CustomerAuthenticateRequestDTO;
 import mingazov.bank.entities.Customer;
@@ -12,9 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Registration API")
 public class RegistrationController {
     private final RegistrationService registrationServiceImpl;
-
+    @Operation(summary = "Регистрирует клиента")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успех"),
+            @ApiResponse(responseCode = "409", description = "Клиент с таким именем уже существует")
+    })
     @PostMapping("/registration")
     public ResponseEntity<String> register(@RequestBody CustomerAuthenticateRequestDTO customerDTO){
         var customer = new Customer();
@@ -24,8 +33,5 @@ public class RegistrationController {
            return ResponseEntity.ok("Пользователь " + customer.getUsername() + " успешно зарегистрирован");
        return ResponseEntity.status(HttpStatus.CONFLICT).body("Пользователь с такими именем уже существует");
     }
-    // todo дописать с дто
-
-
 }
 

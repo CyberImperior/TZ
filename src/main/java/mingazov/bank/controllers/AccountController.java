@@ -1,5 +1,9 @@
 package mingazov.bank.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mingazov.bank.dto.CustomerAddAccountRequestDTO;
 import mingazov.bank.services.interfaces.AccountService;
@@ -12,11 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Account API")
 public class AccountController {
-    //todo сделать имплементацию
     private final CustomerService customerService;
     private final AccountService accountService;
     // todo возможно поменять название эндпоинта
+    @Operation(summary = "Добавляет счета клиенту")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успех"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+    })
     @PostMapping("/addAccount")
     public ResponseEntity<String> addAccount(@RequestBody CustomerAddAccountRequestDTO accountRequestDTO) {
         // todo можно сделать нормально обработку нула

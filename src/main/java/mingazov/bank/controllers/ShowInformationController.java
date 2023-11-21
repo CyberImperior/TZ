@@ -1,5 +1,9 @@
 package mingazov.bank.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mingazov.bank.dto.CustomerAndAccountsAndBalanceResponseDTO;
 import mingazov.bank.dto.CustomerAuthenticateRequestDTO;
@@ -15,10 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Show info API")
 public class ShowInformationController {
     private final AccountService accountService;
     private final CustomerService customerService;
     private final LogBalanceService logBalanceService;
+    @Operation(summary = "Показывает информацию о счетах клиента")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успех"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+    })
     @PostMapping("/showAccounts")
     //todo Как вернуть по разному параметризованные респонс энетити? И как это вынести?
     public ResponseEntity<CustomerAndAccountsAndBalanceResponseDTO> showAccounts(@RequestBody CustomerAuthenticateRequestDTO auth) {
@@ -32,6 +43,12 @@ public class ShowInformationController {
         return ResponseEntity.ok().body(responseDTO);
     }
 
+    @Operation(summary = "Показывает информацию о транзакциях клиента")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успех"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+    })
     @PostMapping("/showTransactions")
     //todo Как вернуть по разному параметризованные респонс энетити? И как это вынести?
     public ResponseEntity<TransactionsResponseDTO> showLogs(@RequestBody CustomerAuthenticateRequestDTO auth) {

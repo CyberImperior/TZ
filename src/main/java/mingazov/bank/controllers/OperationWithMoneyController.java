@@ -1,5 +1,9 @@
 package mingazov.bank.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mingazov.bank.dto.TransferRequestDTO;
 import mingazov.bank.entities.OperationType;
@@ -17,10 +21,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/operation")
+@Tag(name = "Money transactions  API")
 public class OperationWithMoneyController {
-    // todo имплементить
     private final OperationsWithMoneyService operationsWithMoneyService;
     private final CustomerService customerService;
+    @Operation(summary = "Перевод")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успех"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+    })
     @PostMapping("/transfer")
     public ResponseEntity<String> transfer(@RequestBody TransferRequestDTO requestDTO){
         // todo можно сделать нормально обработку нула
@@ -37,7 +47,14 @@ public class OperationWithMoneyController {
                 customer,
                 OperationType.TRANSFER);
         return ResponseEntity.ok().body("Вы перевели!");
+
     }
+    @Operation(summary = "Снятие денег")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успех"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+    })
     @PostMapping("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TransferRequestDTO requestDTO){
         // todo можно сделать нормально обработку нула
@@ -55,6 +72,12 @@ public class OperationWithMoneyController {
                 OperationType.WITHDRAW);
         return ResponseEntity.ok().body("Вы сняли!");
     }
+    @Operation(summary = "Пополнение счета")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Успех"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+    })
     @PostMapping("/replenishment")
     public ResponseEntity<String> replenishment(@RequestBody TransferRequestDTO requestDTO){
         // todo можно сделать нормально обработку нула
