@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import mingazov.bank.entities.Account;
 import mingazov.bank.entities.Customer;
 import mingazov.bank.entities.OperationType;
+import mingazov.bank.exceptions.IncorrectNumberAccountException;
+import mingazov.bank.exceptions.NotEnoughMoneyException;
 import mingazov.bank.repositories.AccountRepository;
 import mingazov.bank.services.interfaces.LogBalanceService;
 import mingazov.bank.services.interfaces.OperationsWithMoneyService;
@@ -17,18 +19,23 @@ public class OperationsWithMoneyServiceImpl implements OperationsWithMoneyServic
     private final AccountRepository accountRepository;
     private final LogBalanceService logBalanceService;
 
-    // todo сделать обработку ошибок, если не найдется по номеру, а также как-то сделать так,
-    //  чтобы на каждый вид ошибок был свой ResponceEntity, find перенести в отдельный метод
-
     public boolean operation(Long from, Long to, Long amount, Customer customer, OperationType type) {
-        var accountFrom = accountRepository.findByAccountNumber(from).get();
+        var accountFrom = accountRepository.findByAccountNumber(from)
+                .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан ваш номер счета"));
         if (type == OperationType.TRANSFER) {
-            var accountTo = accountRepository.findByAccountNumber(to).get();
+            var accountTo = accountRepository.findByAccountNumber(to)
+                    .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан номер счета получателя"));
+            if (accountFrom.getAmountOfMoney() - amount < 0) {
+                throw new NotEnoughMoneyException("На счете недостаточно средств");
+            }
             accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() - amount);
             accountTo.setAmountOfMoney(accountTo.getAmountOfMoney() + amount);
 
             accountRepository.save(accountTo);
         } else if (type == OperationType.WITHDRAW) {
+            if (accountFrom.getAmountOfMoney() - amount < 0) {
+                throw new NotEnoughMoneyException("На счете недостаточно средств");
+            }
             accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() - amount);
         } else {
             accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() + amount);

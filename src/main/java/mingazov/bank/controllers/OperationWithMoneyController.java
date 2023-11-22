@@ -7,11 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mingazov.bank.dto.TransferRequestDTO;
 import mingazov.bank.entities.OperationType;
-import mingazov.bank.services.implementations.CustomerServiceImpl;
-import mingazov.bank.services.implementations.OperationsWithMoneyServiceImpl;
 import mingazov.bank.services.interfaces.CustomerService;
 import mingazov.bank.services.interfaces.OperationsWithMoneyService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,71 +25,40 @@ public class OperationWithMoneyController {
     @Operation(summary = "Перевод")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успех"),
-            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
-            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+            @ApiResponse(responseCode = "402", description = "Недостаточно средств"),
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден или неверно введен номер счета")
     })
     @PostMapping("/transfer")
     public ResponseEntity<String> transfer(@RequestBody TransferRequestDTO requestDTO){
-        // todo можно сделать нормально обработку нула
-        // этот код универсальный можно в другой класс
-        var customer = customerService.findCustomerByUsername(requestDTO.getUsername()).orElse(null);
-        if (customer == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с именем "
-                    + requestDTO.getUsername() + " не найден");
-        if (!customerService.isValidPin(requestDTO.getPin(), customer))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Неверно введен пин-код");
-        operationsWithMoneyService.operation(requestDTO.getAccountNumber(),
-                requestDTO.getAccountNumberTo(),
-                requestDTO.getAmountOfOperation(),
-                customer,
-                OperationType.TRANSFER);
-        return ResponseEntity.ok().body("Вы перевели!");
+        var customer = customerService.checkUsernameAndPin(requestDTO);
+        operationsWithMoneyService.operation(requestDTO.getAccountNumber(), requestDTO.getAccountNumberTo(), requestDTO.getAmountOfOperation(), customer, OperationType.TRANSFER);
+        return ResponseEntity.ok().body("Перевод прошел успешно!");
 
     }
-    @Operation(summary = "Снятие денег")
+    @Operation(summary = "Снятие средств")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успех"),
-            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
-            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+            @ApiResponse(responseCode = "402", description = "Недостаточно средств"),
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден или неверно введен номер счета")
     })
     @PostMapping("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TransferRequestDTO requestDTO){
-        // todo можно сделать нормально обработку нула
-        // этот код универсальный можно в другой класс
-        var customer = customerService.findCustomerByUsername(requestDTO.getUsername()).orElse(null);
-        if (customer == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с именем "
-                    + requestDTO.getUsername() + " не найден");
-        if (!customerService.isValidPin(requestDTO.getPin(), customer))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Неверно введен пин-код");
-        operationsWithMoneyService.operation(requestDTO.getAccountNumber(),
-                requestDTO.getAccountNumberTo(),
-                requestDTO.getAmountOfOperation(),
-                customer,
-                OperationType.WITHDRAW);
-        return ResponseEntity.ok().body("Вы сняли!");
+        var customer = customerService.checkUsernameAndPin(requestDTO);
+        operationsWithMoneyService.operation(requestDTO.getAccountNumber(), requestDTO.getAccountNumberTo(), requestDTO.getAmountOfOperation(), customer, OperationType.WITHDRAW);
+        return ResponseEntity.ok().body("Вы успешно сняли средства");
     }
     @Operation(summary = "Пополнение счета")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успех"),
-            @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
-            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
+            @ApiResponse(responseCode = "403", description = "Неверно введен пин-код"),
+            @ApiResponse(responseCode = "404", description = "Клиент не был найден или неверно введен номер счета")
     })
     @PostMapping("/replenishment")
     public ResponseEntity<String> replenishment(@RequestBody TransferRequestDTO requestDTO){
-        // todo можно сделать нормально обработку нула
-        // этот код универсальный можно в другой класс
-        var customer = customerService.findCustomerByUsername(requestDTO.getUsername()).orElse(null);
-        if (customer == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с именем "
-                    + requestDTO.getUsername() + " не найден");
-        if (!customerService.isValidPin(requestDTO.getPin(), customer))
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Неверно введен пин-код");
-        operationsWithMoneyService.operation(requestDTO.getAccountNumber(),
-                requestDTO.getAccountNumberTo(),
-                requestDTO.getAmountOfOperation(),
-                customer,
-                OperationType.REPLENISHMENT);
-        return ResponseEntity.ok().body("Вы пополнили!");
+        var customer = customerService.checkUsernameAndPin(requestDTO);
+        operationsWithMoneyService.operation(requestDTO.getAccountNumber(), requestDTO.getAccountNumberTo(), requestDTO.getAmountOfOperation(), customer, OperationType.REPLENISHMENT);
+        return ResponseEntity.ok().body("Успешное пополнение");
     }
 }
