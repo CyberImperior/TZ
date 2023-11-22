@@ -18,32 +18,6 @@ public class OperationsWithMoneyServiceImpl implements OperationsWithMoneyServic
     private final AccountRepository accountRepository;
     private final LogBalanceService logBalanceService;
 
-//    public boolean operation(Long from, Long to, Long amount, Customer customer, OperationType type) {
-//        var accountFrom = accountRepository.findByAccountNumber(from)
-//                .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан ваш номер счета"));
-//        if (type == OperationType.TRANSFER) {
-//            var accountTo = accountRepository.findByAccountNumber(to)
-//                    .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан номер счета получателя"));
-//            if (accountFrom.getBalance() - amount < 0) {
-//                throw new NotEnoughMoneyException("На счете недостаточно средств");
-//            }
-//            accountFrom.setBalance(accountFrom.getBalance() - amount);
-//            accountTo.setBalance(accountTo.getBalance() + amount);
-//
-//            accountRepository.save(accountTo);
-//        } else if (type == OperationType.WITHDRAW) {
-//            if (accountFrom.getBalance() - amount < 0) {
-//                throw new NotEnoughMoneyException("На счете недостаточно средств");
-//            }
-//            accountFrom.setBalance(accountFrom.getBalance() - amount);
-//        } else {
-//            accountFrom.setBalance(accountFrom.getBalance() + amount);
-//        }
-//        accountRepository.save(accountFrom);
-//        logBalanceService.createTransaction(from, to, amount, customer, type);
-//        return true;
-//    }
-
     public void transfer(Long from, Long to, Long amount, Customer customer) {
         var messageFrom = "Неверно указан ваш номер счета";
         var messageTo = "Неверно указан номер счета получателя";
@@ -83,6 +57,4 @@ public class OperationsWithMoneyServiceImpl implements OperationsWithMoneyServic
             throw new NotEnoughMoneyException("На счете недостаточно средств");
         }
     }
-
-
 }

@@ -15,6 +15,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 public class OperationsWithMoneyServiceTest {
     @Mock
@@ -25,57 +31,93 @@ public class OperationsWithMoneyServiceTest {
     private OperationsWithMoneyServiceImpl operationsWithMoneyService;
 
     @Test
-    public void testOperation() {
+    public void testTransfer() {
+        Long from = 22222222222L;
+        Long to = 111111111L;
+        Long amount = 100L;
+        var customer = new Customer();
+        var accountFrom = new Account();
+        accountFrom.setAccountNumber(from);
+        accountFrom.setBalance(200L);
+        var accountTo = new Account();
+        accountTo.setAccountNumber(to);
+        accountTo.setBalance(900L);
 
+        when(accountRepository.findByAccountNumber(from)).thenReturn(Optional.of(accountFrom));
+        when(accountRepository.findByAccountNumber(to)).thenReturn(Optional.of(accountTo));
+
+        operationsWithMoneyService.transfer(from,to, amount, customer);
+
+        assertEquals(100L, accountFrom.getBalance());
+        assertEquals(1000L, accountTo.getBalance());
+
+        verify(accountRepository, times(2)).save(any(Account.class));
+        verify(logBalanceService, times(1)).createTransaction(from,to, amount, customer, OperationType.TRANSFER);
+    }
+    @Test
+    public void withdraw() {
+        Long from = 22222222222L;
+        Long amount = 100L;
+        Customer customer = new Customer();
+
+        Account accountFrom = new Account();
+        accountFrom.setBalance(1100L);
+
+        when(accountRepository.findByAccountNumber(from)).thenReturn(Optional.of(accountFrom));
+
+        operationsWithMoneyService.withdraw(from, amount, customer);
+        assertEquals(1000L, accountFrom.getBalance());
+
+        verify(accountRepository, times(1)).save(any(Account.class));
+        verify(logBalanceService, times(1))
+                .createTransaction(from, null, amount, customer, OperationType.WITHDRAW);
+    }
+    @Test
+    public void replenishment() {
+        Long from = 22222222222L;
+        Long amount = 100L;
+        Customer customer = new Customer();
+
+        Account accountFrom = new Account();
+        accountFrom.setBalance(900L);
+
+        when(accountRepository.findByAccountNumber(from)).thenReturn(Optional.of(accountFrom));
+
+        operationsWithMoneyService.replenishment(from, amount, customer);
+        assertEquals(1000L, accountFrom.getBalance());
+        verify(accountRepository, times(1)).save(any(Account.class));
+        verify(logBalanceService, times(1))
+                .createTransaction(from, null, amount, customer, OperationType.REPLENISHMENT);
+    }
+    @Test
+    public void testWithdrawIfNotEnoughMoney() {
+        Long from = 22222222222L;
+        Long amount = 1000L;
+        Customer customer = new Customer();
+
+        Account accountFrom = new Account();
+        accountFrom.setBalance(900L);
+
+        when(accountRepository.findByAccountNumber(from))
+                .thenReturn(java.util.Optional.of(accountFrom));
+
+        assertThrows(NotEnoughMoneyException.class,
+                () -> operationsWithMoneyService.withdraw(from, amount, customer));
+
+        verify(accountRepository, never()).save(any());
+        verify(logBalanceService, never())
+                .createTransaction(any(), any(), any(), any(), any());
     }
 
     @Test
-    public void testOperationIfIncorrectFromAccountNumber() {
+    public void testFindByAccountNumberOrIncorrectNumberAccountExceptionIfException() {
+        Long accountNumber = 22222222222L;
+        String message = "Неверно указан номер счета";
 
-    }
-    @Test
-    public void testOperationIfIncorrectToAccountNumber() {
+        when(accountRepository.findByAccountNumber(accountNumber))
+                .thenReturn(java.util.Optional.empty());
 
-    }
-    @Test
-    public void testOperationIfTransferAndNotEnoughMoney() {
-
-    }
-    @Test
-    public void testOperationWithdrawAndNotEnoughMoney() {
-
-    }
-    @Test
-    public void testFindByAccountNumber() {
-
-    }
-
-    public boolean operation(Long from, Long to, Long amount, Customer customer, OperationType type) {
-        var accountFrom = accountRepository.findByAccountNumber(from)
-                .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан ваш номер счета"));
-        if (type == OperationType.TRANSFER) {
-            var accountTo = accountRepository.findByAccountNumber(to)
-                    .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан номер счета получателя"));
-            if (accountFrom.getBalance() - amount < 0) {
-                throw new NotEnoughMoneyException("На счете недостаточно средств");
-            }
-            accountFrom.setBalance(accountFrom.getBalance() - amount);
-            accountTo.setBalance(accountTo.getBalance() + amount);
-
-            accountRepository.save(accountTo);
-        } else if (type == OperationType.WITHDRAW) {
-            if (accountFrom.getBalance() - amount < 0) {
-                throw new NotEnoughMoneyException("На счете недостаточно средств");
-            }
-            accountFrom.setBalance(accountFrom.getBalance() - amount);
-        } else {
-            accountFrom.setBalance(accountFrom.getBalance() + amount);
-        }
-        accountRepository.save(accountFrom);
-        logBalanceService.createTransaction(from, to, amount, customer, type);
-        return true;
-    }
-    public Optional<Account> findByAccountNumber(Long accountNumber) {
-        return accountRepository.findByAccountNumber(accountNumber);
+        assertThrows(IncorrectNumberAccountException.class,
+                () -> operationsWithMoneyService.findByAccountNumberOrIncorrectNumberAccountException(accountNumber, message));
     }
 }
