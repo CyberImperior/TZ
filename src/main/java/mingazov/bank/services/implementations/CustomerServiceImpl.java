@@ -20,15 +20,14 @@ public class CustomerServiceImpl implements CustomerService {
         return  customerRepository.findByUsername(username);
     }
     public boolean isValidPin(Short requestPin, Customer customer) {
+        if (String.valueOf(requestPin).length() != 4)
+            throw new IncorrectPinException("Пин-код должен состоять из 4 цифр");
         return requestPin.equals(customer.getPin());
     }
 
     public Customer checkUsernameAndPin(CustomerAuthenticateRequestDTO dto) {
         var customer = findCustomerByUsername(dto.getUsername())
                 .orElseThrow(() -> new CustomerNotExistsException("Пользователь не найден"));
-//        if (customer == null)
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Пользователь с именем "
-//                    + accountRequestDTO.getUsername() + " не найден");
         if (!isValidPin(dto.getPin(), customer))
             throw new IncorrectPinException("Неверно введен пин-код");
         return customer;

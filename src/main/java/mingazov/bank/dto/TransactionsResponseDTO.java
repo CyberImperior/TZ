@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 public class TransactionsResponseDTO {
     private String username;
     private List<AllTransactionsForOneCustomerResponseEmbDTO> logs;
-
     public TransactionsResponseDTO(Customer customer, List<LogBalance> logs) {
         this.username = customer.getUsername();
         this.logs = logs.stream().map(AllTransactionsForOneCustomerResponseEmbDTO::new).collect(Collectors.toList());

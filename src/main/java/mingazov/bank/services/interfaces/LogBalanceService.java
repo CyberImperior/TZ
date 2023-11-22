@@ -4,7 +4,6 @@ import mingazov.bank.entities.Customer;
 import mingazov.bank.entities.LogBalance;
 import mingazov.bank.entities.OperationType;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface LogBalanceService {

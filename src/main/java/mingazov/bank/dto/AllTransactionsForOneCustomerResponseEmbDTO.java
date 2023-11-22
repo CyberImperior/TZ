@@ -1,13 +1,7 @@
 package mingazov.bank.dto;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
-import mingazov.bank.entities.Account;
-import mingazov.bank.entities.Customer;
 import mingazov.bank.entities.LogBalance;
 import mingazov.bank.entities.OperationType;
 

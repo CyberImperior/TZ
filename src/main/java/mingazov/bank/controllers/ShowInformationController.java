@@ -29,6 +29,7 @@ public class ShowInformationController {
             @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
             @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
     })
+
     @PostMapping("/showAccounts")
     public ResponseEntity<CustomerAndAccountsAndBalanceResponseDTO> showAccounts(@RequestBody CustomerAuthenticateRequestDTO auth) {
         var customer = customerService.checkUsernameAndPin(auth);
@@ -43,6 +44,7 @@ public class ShowInformationController {
             @ApiResponse(responseCode = "404", description = "Клиент не был найден"),
             @ApiResponse(responseCode = "403", description = "Неверно введен пин-код")
     })
+
     @PostMapping("/showTransactions")
     public ResponseEntity<TransactionsResponseDTO> showLogs(@RequestBody CustomerAuthenticateRequestDTO auth) {
         var customer = customerService.checkUsernameAndPin(auth);

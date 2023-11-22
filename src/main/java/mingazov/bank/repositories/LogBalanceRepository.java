@@ -1,6 +1,5 @@
 package mingazov.bank.repositories;
 
-import mingazov.bank.entities.Account;
 import mingazov.bank.entities.LogBalance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import mingazov.bank.entities.Account;
 import mingazov.bank.entities.Customer;
 import mingazov.bank.exceptions.CustomerAlreadyExistsException;
+import mingazov.bank.exceptions.IncorrectPinException;
 import mingazov.bank.repositories.AccountRepository;
 import mingazov.bank.repositories.CustomerRepository;
 import mingazov.bank.services.interfaces.RegistrationService;
@@ -18,6 +19,8 @@ public class RegistrationServiceImpl implements RegistrationService {
     public boolean createCustomerIfUsernameNotExist(Customer customer) {
         if (customerRepository.findByUsername(customer.getUsername()).isPresent())
             throw new CustomerAlreadyExistsException("Клиент уже существует");
+        if (String.valueOf(customer.getPin()).length() != 4)
+            throw new  IncorrectPinException("Пин-код должен состоять из 4 цифр");
         var account = new Account();
         account.setCustomer(customer);
 

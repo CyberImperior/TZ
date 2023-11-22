@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import mingazov.bank.dto.CustomerAddAccountRequestDTO;
 import mingazov.bank.services.interfaces.AccountService;
 import mingazov.bank.services.interfaces.CustomerService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +29,6 @@ public class AccountController {
     public ResponseEntity<String> addAccount(@RequestBody CustomerAddAccountRequestDTO accountRequestDTO) {
         var customer = customerService.checkUsernameAndPin(accountRequestDTO);
         accountService.addAccountsForCustomer(customer, accountRequestDTO);
-        // todo сделать через формат и проценты?
         return ResponseEntity.ok("У пользователя " + accountRequestDTO.getUsername()
                 + " успешно создано " + accountRequestDTO.getAmountOfAccounts() + " счетов" );
 
