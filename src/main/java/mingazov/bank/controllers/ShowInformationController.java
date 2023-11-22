@@ -5,9 +5,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import mingazov.bank.dto.CustomerAndAccountsAndBalanceResponseDTO;
+import mingazov.bank.dto.CustomerAccountsResponseDTO;
 import mingazov.bank.dto.CustomerAuthenticateRequestDTO;
-import mingazov.bank.dto.TransactionsResponseDTO;
+import mingazov.bank.dto.TransactionsAndUsernameResponseDTO;
 import mingazov.bank.services.interfaces.AccountService;
 import mingazov.bank.services.interfaces.CustomerService;
 import mingazov.bank.services.interfaces.LogBalanceService;
@@ -31,10 +31,10 @@ public class ShowInformationController {
     })
 
     @PostMapping("/showAccounts")
-    public ResponseEntity<CustomerAndAccountsAndBalanceResponseDTO> showAccounts(@RequestBody CustomerAuthenticateRequestDTO auth) {
+    public ResponseEntity<CustomerAccountsResponseDTO> showAccounts(@RequestBody CustomerAuthenticateRequestDTO auth) {
         var customer = customerService.checkUsernameAndPin(auth);
         var accounts = accountService.findAccountsByCustomer_Id(customer.getId());
-        var responseDTO = new CustomerAndAccountsAndBalanceResponseDTO(customer, accounts);
+        var responseDTO = new CustomerAccountsResponseDTO(customer, accounts);
         return ResponseEntity.ok().body(responseDTO);
     }
 
@@ -46,10 +46,10 @@ public class ShowInformationController {
     })
 
     @PostMapping("/showTransactions")
-    public ResponseEntity<TransactionsResponseDTO> showLogs(@RequestBody CustomerAuthenticateRequestDTO auth) {
+    public ResponseEntity<TransactionsAndUsernameResponseDTO> showLogs(@RequestBody CustomerAuthenticateRequestDTO auth) {
         var customer = customerService.checkUsernameAndPin(auth);
         var logs = logBalanceService.findAccountsByCustomer_Id(customer.getId());
-        var responseDTO = new TransactionsResponseDTO(customer, logs);
+        var responseDTO = new TransactionsAndUsernameResponseDTO(customer, logs);
         return ResponseEntity.ok().body(responseDTO);
     }
 }

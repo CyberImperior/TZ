@@ -11,7 +11,6 @@ import mingazov.bank.services.interfaces.LogBalanceService;
 import mingazov.bank.services.interfaces.OperationsWithMoneyService;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,33 +18,70 @@ public class OperationsWithMoneyServiceImpl implements OperationsWithMoneyServic
     private final AccountRepository accountRepository;
     private final LogBalanceService logBalanceService;
 
-    public boolean operation(Long from, Long to, Long amount, Customer customer, OperationType type) {
-        var accountFrom = accountRepository.findByAccountNumber(from)
-                .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан ваш номер счета"));
-        if (type == OperationType.TRANSFER) {
-            var accountTo = accountRepository.findByAccountNumber(to)
-                    .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан номер счета получателя"));
-            if (accountFrom.getAmountOfMoney() - amount < 0) {
-                throw new NotEnoughMoneyException("На счете недостаточно средств");
-            }
-            accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() - amount);
-            accountTo.setAmountOfMoney(accountTo.getAmountOfMoney() + amount);
+//    public boolean operation(Long from, Long to, Long amount, Customer customer, OperationType type) {
+//        var accountFrom = accountRepository.findByAccountNumber(from)
+//                .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан ваш номер счета"));
+//        if (type == OperationType.TRANSFER) {
+//            var accountTo = accountRepository.findByAccountNumber(to)
+//                    .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан номер счета получателя"));
+//            if (accountFrom.getBalance() - amount < 0) {
+//                throw new NotEnoughMoneyException("На счете недостаточно средств");
+//            }
+//            accountFrom.setBalance(accountFrom.getBalance() - amount);
+//            accountTo.setBalance(accountTo.getBalance() + amount);
+//
+//            accountRepository.save(accountTo);
+//        } else if (type == OperationType.WITHDRAW) {
+//            if (accountFrom.getBalance() - amount < 0) {
+//                throw new NotEnoughMoneyException("На счете недостаточно средств");
+//            }
+//            accountFrom.setBalance(accountFrom.getBalance() - amount);
+//        } else {
+//            accountFrom.setBalance(accountFrom.getBalance() + amount);
+//        }
+//        accountRepository.save(accountFrom);
+//        logBalanceService.createTransaction(from, to, amount, customer, type);
+//        return true;
+//    }
 
-            accountRepository.save(accountTo);
-        } else if (type == OperationType.WITHDRAW) {
-            if (accountFrom.getAmountOfMoney() - amount < 0) {
-                throw new NotEnoughMoneyException("На счете недостаточно средств");
-            }
-            accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() - amount);
-        } else {
-            accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() + amount);
-        }
+    public void transfer(Long from, Long to, Long amount, Customer customer) {
+        var messageFrom = "Неверно указан ваш номер счета";
+        var messageTo = "Неверно указан номер счета получателя";
+        var accountFrom = findByAccountNumberOrIncorrectNumberAccountException(from, messageFrom);
+        var accountTo = findByAccountNumberOrIncorrectNumberAccountException(to, messageTo);
+        isBalanceNonNegative(accountFrom, amount);
+        accountFrom.setBalance(accountFrom.getBalance() - amount);
+        accountTo.setBalance(accountTo.getBalance() + amount);
         accountRepository.save(accountFrom);
-        logBalanceService.createTransaction(from, to, amount, customer, type);
-        return true;
+        accountRepository.save(accountTo);
+        logBalanceService.createTransaction(from, to, amount, customer, OperationType.TRANSFER);
+
     }
-    public Optional<Account> findByAccountNumber(Long accountNumber) {
-       return accountRepository.findByAccountNumber(accountNumber);
+    public void withdraw(Long from, Long amount, Customer customer) {
+        var message = "Неверно указан ваш номер счета";
+        var accountFrom = findByAccountNumberOrIncorrectNumberAccountException(from, message);
+        isBalanceNonNegative(accountFrom, amount);
+        accountFrom.setBalance(accountFrom.getBalance() - amount);
+        accountRepository.save(accountFrom);
+        logBalanceService.createTransaction(from, null, amount, customer, OperationType.WITHDRAW);
+
+    }
+    public void replenishment(Long from, Long amount, Customer customer) {
+        var message = "Неверно указан ваш номер счета";
+        var accountFrom = findByAccountNumberOrIncorrectNumberAccountException(from, message);
+        accountFrom.setBalance(accountFrom.getBalance() + amount);
+        accountRepository.save(accountFrom);
+        logBalanceService.createTransaction(from, null, amount, customer, OperationType.REPLENISHMENT);
+    }
+    public Account findByAccountNumberOrIncorrectNumberAccountException(Long accountNumber, String message) {
+       return  accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new IncorrectNumberAccountException(message));
+    }
+
+    public void isBalanceNonNegative(Account accountFrom, Long amount) {
+        if (accountFrom.getBalance() - amount < 0) {
+            throw new NotEnoughMoneyException("На счете недостаточно средств");
+        }
     }
 
 

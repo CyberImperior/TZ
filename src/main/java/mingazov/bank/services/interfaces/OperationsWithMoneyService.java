@@ -2,11 +2,14 @@ package mingazov.bank.services.interfaces;
 
 import mingazov.bank.entities.Account;
 import mingazov.bank.entities.Customer;
-import mingazov.bank.entities.OperationType;
 
-import java.util.Optional;
 
 public interface OperationsWithMoneyService {
-    boolean operation(Long from, Long to, Long amount, Customer customer, OperationType type);
-    Optional<Account> findByAccountNumber(Long accountNumber);
+    void transfer(Long from, Long to, Long amount, Customer customer);
+    void withdraw(Long from, Long amount, Customer customer);
+    void replenishment(Long from, Long amount, Customer customer);
+    Account findByAccountNumberOrIncorrectNumberAccountException(Long accountNumber, String message);
+
+    void isBalanceNonNegative(Account accountFrom, Long amount);
+
 }

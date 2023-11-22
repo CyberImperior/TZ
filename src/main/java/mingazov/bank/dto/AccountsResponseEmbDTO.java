@@ -6,11 +6,11 @@ import mingazov.bank.entities.Account;
 
 @Getter
 @Setter
-public class AccountsWithOnlyBalanceResponseEmbDTO {
+public class AccountsResponseEmbDTO {
     private Long accountNumber;
     private Long balance;
-    public AccountsWithOnlyBalanceResponseEmbDTO(Account account) {
+    public AccountsResponseEmbDTO(Account account) {
         this.accountNumber = account.getAccountNumber();
-        this.balance = account.getAmountOfMoney();
+        this.balance = account.getBalance();
     }
 }

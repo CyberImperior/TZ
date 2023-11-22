@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mingazov.bank.dto.TransferRequestDTO;
-import mingazov.bank.entities.OperationType;
+import mingazov.bank.dto.WithdrawAndReplenishmentRequestDTO;
 import mingazov.bank.services.interfaces.CustomerService;
 import mingazov.bank.services.interfaces.OperationsWithMoneyService;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class OperationWithMoneyController {
     @PostMapping("/transfer")
     public ResponseEntity<String> transfer(@RequestBody TransferRequestDTO requestDTO){
         var customer = customerService.checkUsernameAndPin(requestDTO);
-        operationsWithMoneyService.operation(requestDTO.getAccountNumber(), requestDTO.getAccountNumberTo(), requestDTO.getAmountOfOperation(), customer, OperationType.TRANSFER);
+        operationsWithMoneyService.transfer(requestDTO.getAccountNumber(), requestDTO.getAccountNumberTo(), requestDTO.getAmountOfOperation(), customer);
         return ResponseEntity.ok().body("Перевод прошел успешно!");
 
     }
@@ -44,9 +44,9 @@ public class OperationWithMoneyController {
             @ApiResponse(responseCode = "404", description = "Клиент не был найден или неверно введен номер счета")
     })
     @PostMapping("/withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody TransferRequestDTO requestDTO){
+    public ResponseEntity<String> withdraw(@RequestBody WithdrawAndReplenishmentRequestDTO requestDTO){
         var customer = customerService.checkUsernameAndPin(requestDTO);
-        operationsWithMoneyService.operation(requestDTO.getAccountNumber(), requestDTO.getAccountNumberTo(), requestDTO.getAmountOfOperation(), customer, OperationType.WITHDRAW);
+        operationsWithMoneyService.withdraw(requestDTO.getAccountNumber(), requestDTO.getAmountOfOperation(), customer);
         return ResponseEntity.ok().body("Вы успешно сняли средства");
     }
     @Operation(summary = "Пополнение счета")
@@ -56,9 +56,9 @@ public class OperationWithMoneyController {
             @ApiResponse(responseCode = "404", description = "Клиент не был найден или неверно введен номер счета")
     })
     @PostMapping("/replenishment")
-    public ResponseEntity<String> replenishment(@RequestBody TransferRequestDTO requestDTO){
+    public ResponseEntity<String> replenishment(@RequestBody WithdrawAndReplenishmentRequestDTO requestDTO){
         var customer = customerService.checkUsernameAndPin(requestDTO);
-        operationsWithMoneyService.operation(requestDTO.getAccountNumber(), requestDTO.getAccountNumberTo(), requestDTO.getAmountOfOperation(), customer, OperationType.REPLENISHMENT);
+        operationsWithMoneyService.replenishment(requestDTO.getAccountNumber(), requestDTO.getAmountOfOperation(), customer);
         return ResponseEntity.ok().body("Успешное пополнение");
     }
 }

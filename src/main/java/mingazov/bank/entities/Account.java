@@ -16,7 +16,7 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long accountNumber = GenerateAccountNumber.get();
-    private Long amountOfMoney = 0L;
+    private Long balance = 0L;
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;

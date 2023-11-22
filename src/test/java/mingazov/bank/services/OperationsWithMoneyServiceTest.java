@@ -56,20 +56,20 @@ public class OperationsWithMoneyServiceTest {
         if (type == OperationType.TRANSFER) {
             var accountTo = accountRepository.findByAccountNumber(to)
                     .orElseThrow(() -> new IncorrectNumberAccountException("Неверно указан номер счета получателя"));
-            if (accountFrom.getAmountOfMoney() - amount < 0) {
+            if (accountFrom.getBalance() - amount < 0) {
                 throw new NotEnoughMoneyException("На счете недостаточно средств");
             }
-            accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() - amount);
-            accountTo.setAmountOfMoney(accountTo.getAmountOfMoney() + amount);
+            accountFrom.setBalance(accountFrom.getBalance() - amount);
+            accountTo.setBalance(accountTo.getBalance() + amount);
 
             accountRepository.save(accountTo);
         } else if (type == OperationType.WITHDRAW) {
-            if (accountFrom.getAmountOfMoney() - amount < 0) {
+            if (accountFrom.getBalance() - amount < 0) {
                 throw new NotEnoughMoneyException("На счете недостаточно средств");
             }
-            accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() - amount);
+            accountFrom.setBalance(accountFrom.getBalance() - amount);
         } else {
-            accountFrom.setAmountOfMoney(accountFrom.getAmountOfMoney() + amount);
+            accountFrom.setBalance(accountFrom.getBalance() + amount);
         }
         accountRepository.save(accountFrom);
         logBalanceService.createTransaction(from, to, amount, customer, type);

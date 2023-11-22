@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class TransactionsResponseDTO {
+public class TransactionsAndUsernameResponseDTO {
     private String username;
-    private List<AllTransactionsForOneCustomerResponseEmbDTO> logs;
-    public TransactionsResponseDTO(Customer customer, List<LogBalance> logs) {
+    private List<TransactionsResponseEmbDTO> logs;
+    public TransactionsAndUsernameResponseDTO(Customer customer, List<LogBalance> logs) {
         this.username = customer.getUsername();
-        this.logs = logs.stream().map(AllTransactionsForOneCustomerResponseEmbDTO::new).collect(Collectors.toList());
+        this.logs = logs.stream().map(TransactionsResponseEmbDTO::new).collect(Collectors.toList());
     }
 }

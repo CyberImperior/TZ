@@ -9,14 +9,14 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class AllTransactionsForOneCustomerResponseEmbDTO {
+public class TransactionsResponseEmbDTO {
     private OperationType operationType;
     private Long amount;
     private Long fromAccountNumber;
     private Long toAccountNumber;
     private LocalDateTime timestamp;
 
-    public AllTransactionsForOneCustomerResponseEmbDTO(LogBalance log) {
+    public TransactionsResponseEmbDTO(LogBalance log) {
         this.operationType = log.getOperationType();
         this.amount = log.getAmount();
         this.fromAccountNumber = log.getFromAccountNumber();

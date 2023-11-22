@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TransferRequestDTO extends WithdrawAndReplenishmentOperationsRequestDTO {
+public class TransferRequestDTO extends WithdrawAndReplenishmentRequestDTO {
     private Long accountNumberTo;
 }
