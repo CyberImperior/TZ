@@ -16,9 +16,6 @@ import java.util.Optional;
 public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
 
-    public Optional<Account> findByAccountNumber(Long accountNumber) {
-        return accountRepository.findByAccountNumber(accountNumber);
-    }
     public List<Account> findAccountsByCustomer_Id(Long id) {
         return accountRepository.findAccountsByCustomer_Id(id);
     }
