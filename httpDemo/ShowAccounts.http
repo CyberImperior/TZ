@@ -1,0 +1,52 @@
+#Получение счетов клиента
+
+POST http://localhost:8080/showAccounts
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 2343
+}
+
+###
+
+#Получение счетов, если клиент не найден
+POST http://localhost:8080/addAccount
+Content-Type: application/json
+
+{
+  "username": "Nikita",
+  "pin": 2343
+}
+
+###
+
+#Получение счетов, если неверно введен пин
+POST http://localhost:8080/addAccount
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 1111
+}
+
+###
+
+POST http://localhost:8080/addAccount
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 11111
+}
+
+###
+
+POST http://localhost:8080/addAccount
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 111
+}
+

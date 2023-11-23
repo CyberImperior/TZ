@@ -1,0 +1,78 @@
+#Пополнение
+
+POST http://localhost:8080/operation/replenishment
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 2343,
+  "accountNumber":  1292937931691,
+  "amountOfOperation": 1000
+}
+
+###
+
+#Пополнение, если неверное имя пользователя
+
+POST http://localhost:8080/operation/replenishment
+Content-Type: application/json
+
+{
+  "username": "Sonic",
+  "pin": 2343,
+  "accountNumber":  1292937931691,
+  "amountOfOperation": 1000
+}
+
+###
+
+#Пополнение, если неверный пин-код
+
+POST http://localhost:8080/operation/replenishment
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 1111,
+  "accountNumber":  1292937931691,
+  "amountOfOperation": 1000
+}
+
+###
+
+POST http://localhost:8080/operation/replenishment
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 111,
+  "accountNumber":  1292937931691,
+  "amountOfOperation": 1000
+}
+
+###
+
+POST http://localhost:8080/operation/replenishment
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 11111,
+  "accountNumber":  1292937931691,
+  "amountOfOperation": 1000
+}
+
+###
+
+#Пополнение, если неверные номера счетов
+
+POST http://localhost:8080/operation/replenishment
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 2343,
+  "accountNumber":  1000000,
+  "amountOfOperation": 1000
+}
+

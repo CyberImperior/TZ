@@ -1,0 +1,45 @@
+#Регистрация пользователя с новым именем
+
+POST http://localhost:8080/registration
+Content-Type: application/json
+
+{
+  "username": "Ruslan",
+  "pin":  1111
+}
+
+###
+
+#Попытка регистрации пользователя с уже существующем именем
+
+POST http://localhost:8080/registration
+Content-Type: application/json
+
+{
+  "username": "Ruslan",
+  "pin":  1111
+}
+
+###
+
+#Попытки регистрации пользователя с некорректным пин-кодом
+
+POST http://localhost:8080/registration
+Content-Type: application/json
+
+{
+  "username": "Boris",
+  "pin":  111
+}
+
+###
+
+POST http://localhost:8080/registration
+Content-Type: application/json
+
+{
+  "username": "Sofiya",
+  "pin":  11111
+}
+
+###

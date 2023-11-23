@@ -1,0 +1,52 @@
+#Получение транзакций клиента
+
+POST http://localhost:8080/showTransactions
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 2343
+}
+
+###
+
+#Получение транзакций, если клиент не найден
+POST http://localhost:8080/showTransactions
+Content-Type: application/json
+
+{
+  "username": "Nikita",
+  "pin": 2343
+}
+
+###
+
+#Получение транзакций, если неверно введен пин
+POST http://localhost:8080/showTransactions
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 1111
+}
+
+###
+
+POST http://localhost:8080/showTransactions
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 11111
+}
+
+###
+
+POST http://localhost:8080/showTransactions
+Content-Type: application/json
+
+{
+  "username": "Denis",
+  "pin": 111
+}
+

@@ -32,25 +32,25 @@ public class InitDB implements CommandLineRunner {
 
         var account1 = new Account();
         account1.setCustomer(customer1);
-        account1.setBalance(100L);
-        account1.setAccountNumber(912561618276L);
+        account1.setBalance(10000L);
+        account1.setAccountNumber(1292937931691L);
         accountRepository.save(account1);
 
         var account2 = new Account();
         account2.setCustomer(customer1);
-        account2.setBalance(99999999L);
-        account2.setAccountNumber(912561618277L);
+        account2.setBalance(100000000L);
+        account2.setAccountNumber(1292937931692L);
         accountRepository.save(account2);
 
         var account3 = new Account();
         account3.setCustomer(customer2);
-        account3.setBalance(15L);
-        account3.setAccountNumber(912561618278L);
+        account3.setBalance(100L);
+        account3.setAccountNumber(1292937931693L);
         accountRepository.save(account3);
 
         var account4 = new Account();
         account4.setCustomer(customer2);
-        account4.setAccountNumber(912561618279L);
+        account4.setAccountNumber(1292937931694L);
         accountRepository.save(account4);
     }
 }
